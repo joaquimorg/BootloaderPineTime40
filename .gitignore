@@ -1,0 +1,24 @@
+# CMake
+_build
+pkg
+
+# Resulting binary files
+*.a
+*.so
+*.s
+*.hex
+*.bin
+*.map
+*.out
+src/dfu_public_key.c
+!softdevice/*.hex
+
+# Linux
+**/.directory
+**/*.swp
+
+# OSX/MacOS
+**/.DS_Store
+
+# Windows
+**/thumbs.db
