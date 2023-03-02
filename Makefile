@@ -253,17 +253,19 @@ erase:
 	@echo	** Erase Pinetime flash
 	openocd.exe -f interface/stlink.cfg -c 'transport select hla_swd' -f target/nrf52.cfg -c init -c 'reset halt' -c 'nrf5 mass_erase' -c reset -c shutdown
 
+settings:
+	@echo	** Generating Settings
+	D:\tools\nrfutil.exe settings generate --family NRF52840 --key-file d:/Work/PineTime/nordic_pem_keys/pinetime.pem --bootloader-version 2 --application-version 1 --bl-settings-version 2 --app-boot-validation NO_VALIDATION --application ./pkg/PinetimeNew40.ino.hex  ./pkg/bl_settings.hex
+
 flash: default
 	@echo	** Program Pinetime with $(OUTPUT_DIRECTORY)/$(PROJECT_NAME).app.hex
-#	D:\tools\nrfutil.exe settings generate --family NRF52840 --key-file d:/Work/PineTime/nordic_pem_keys/pinetime.pem --bootloader-version 2 --bl-settings-version 2 ./pkg/bl_settings.hex
-#	python scripts/hexmerge.py --overlap=replace ./pkg/bl_settings.hex $(OUTPUT_DIRECTORY)/$(PROJECT_NAME).hex -o ./pkg/$(PROJECT_NAME)_settings.hex
-	openocd.exe -c "tcl_port disabled" -c "gdb_port 3333" -c "telnet_port 4444" -f interface/stlink.cfg -c 'transport select hla_swd' -f target/nrf52.cfg -c "program $(OUTPUT_DIRECTORY)/$(PROJECT_NAME).hex" -c reset -c shutdown
+	python scripts/hexmerge.py --overlap=replace ./pkg/bl_settings.hex $(OUTPUT_DIRECTORY)/$(PROJECT_NAME).hex -o ./pkg/$(PROJECT_NAME)_settings.hex
+	openocd.exe -c "tcl_port disabled" -c "gdb_port 3333" -c "telnet_port 4444" -f interface/stlink.cfg -c 'transport select hla_swd' -f target/nrf52.cfg -c "program ./pkg/$(PROJECT_NAME)_settings.hex" -c reset -c shutdown
 
 dfu-zip:
 	@echo	** Bootloader DFU zip
-#	D:\tools\nrfutil.exe settings generate --family NRF52840 --bootloader-version 2 --bl-settings-version 2 ./pkg/bl_settings.hex
-#	python scripts/hexmerge.py --overlap=replace ./pkg/bl_settings.hex $(OUTPUT_DIRECTORY)/$(PROJECT_NAME).hex -o ./pkg/$(PROJECT_NAME)_settings.hex
-	D:\tools\nrfutil.exe pkg generate --key-file d:/Work/PineTime/nordic_pem_keys/pinetime.pem --bootloader $(OUTPUT_DIRECTORY)/$(PROJECT_NAME).hex --hw-version 52 --sd-req 0x125 --bootloader-version 2 ./pkg/$(PROJECT_NAME).zip
+	python scripts/hexmerge.py --overlap=replace ./pkg/bl_settings.hex $(OUTPUT_DIRECTORY)/$(PROJECT_NAME).hex -o ./pkg/$(PROJECT_NAME)_settings.hex
+	D:\tools\nrfutil.exe pkg generate --key-file d:/Work/PineTime/nordic_pem_keys/pinetime.pem --bootloader ./pkg/$(PROJECT_NAME)_settings.hex --hw-version 52 --sd-req 0x125 --bootloader-version 2 ./pkg/$(PROJECT_NAME).zip
 
 dfu-softdevice:
 	@echo	** Bootloader DFU zip

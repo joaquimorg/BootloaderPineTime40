@@ -74,16 +74,16 @@ static void dfu_observer(nrf_dfu_evt_type_t evt_type)
             switch (anim)
             {
             case 1:
-                lcd_print(10, 160, "RECEIVING -", RGB2COLOR(0, 255, 0));
+                lcd_print(10, 160, "RECEIVING .", RGB2COLOR(0, 255, 0));
                 break;
             case 2:
-                lcd_print(10, 160, "RECEIVING \\", RGB2COLOR(0, 255, 0));
+                lcd_print(10, 160, "RECEIVING ..", RGB2COLOR(0, 255, 0));
                 break;
             case 3:
-                lcd_print(10, 160, "RECEIVING $", RGB2COLOR(0, 255, 0));
+                lcd_print(10, 160, "RECEIVING ...", RGB2COLOR(0, 255, 0));
                 break;
             case 4:
-                lcd_print(10, 160, "RECEIVING /", RGB2COLOR(0, 255, 0));
+                lcd_print(10, 160, "RECEIVING ....", RGB2COLOR(0, 255, 0));
                 break;            
             default:
                 break;
