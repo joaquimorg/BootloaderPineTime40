@@ -8,9 +8,26 @@
 // Pinetime IO
 
 #define LCD_LIGHT_1 NRF_GPIO_PIN_MAP(1, 4 )
-#define KEY_ACTION NRF_GPIO_PIN_MAP(1, 2 )
+//#define KEY_ACTION NRF_GPIO_PIN_MAP(1, 2 )
 
 #define BUTTON_PULL    NRF_GPIO_PIN_PULLUP
+
+// ------------------------------------------------------------------------------------------------------
+/*
+void button_init(uint32_t pin) {
+  if (BUTTON_PULL == NRF_GPIO_PIN_PULLDOWN) {
+    nrf_gpio_cfg_sense_input(pin, BUTTON_PULL, NRF_GPIO_PIN_SENSE_HIGH);
+  }
+  else {
+    nrf_gpio_cfg_sense_input(pin, BUTTON_PULL, NRF_GPIO_PIN_SENSE_LOW);
+  }
+}
+
+bool button_pressed(uint32_t pin) {
+  uint32_t const active_state = (BUTTON_PULL == NRF_GPIO_PIN_PULLDOWN ? 1 : 0);
+  return nrf_gpio_pin_read(pin) == active_state;
+}
+*/
 
 // ------------------------------------------------------------------------------------------------------
 // LCD
@@ -111,14 +128,14 @@ void display_fill(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t c
 #define CHAR_ZOOM 2 
 
 void lcd_pixel(uint16_t x1, uint16_t y1, uint16_t color) {
-    uint8_t buffer[(CHAR_ZOOM*CHAR_ZOOM) * 2];
-    uint8_t buffpos = 0;
-    set_addr_display(x1, y1, CHAR_ZOOM, CHAR_ZOOM);    
-    for (uint8_t size = 0; size < CHAR_ZOOM*CHAR_ZOOM; size++) {
-        buffer[buffpos++] = color >> 8;
-        buffer[buffpos++] = color & 0xff;
-    }
-    write_display(buffer, sizeof(buffer));
+  uint8_t buffer[(CHAR_ZOOM * CHAR_ZOOM) * 2];
+  uint8_t buffpos = 0;
+  set_addr_display(x1, y1, CHAR_ZOOM, CHAR_ZOOM);
+  for (uint8_t size = 0; size < CHAR_ZOOM * CHAR_ZOOM; size++) {
+    buffer[buffpos++] = color >> 8;
+    buffer[buffpos++] = color & 0xff;
+  }
+  write_display(buffer, sizeof(buffer));
 }
 
 void lcd_char(int x1, int y1, char ch, uint16_t color) {
@@ -159,6 +176,10 @@ static void hardware_init(void) {
   // Backlight
   nrf_gpio_pin_clear(LCD_LIGHT_1);
   nrf_gpio_cfg_output(LCD_LIGHT_1);
+
+  //button_init(KEY_ACTION);
+
+  NRFX_DELAY_US(100); // wait for the pin state is stable
 
   init_display();
 

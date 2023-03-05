@@ -15,6 +15,9 @@
 #include "nrf_bootloader_info.h"
 #include "nrf_delay.h"
 
+//#define DFU_MAGIC_OTA_RESET             0xA8
+//bool ota_dfu = false;
+
 static void on_error(void)
 {
     NVIC_SystemReset();
@@ -74,16 +77,16 @@ static void dfu_observer(nrf_dfu_evt_type_t evt_type)
             switch (anim)
             {
             case 1:
-                lcd_print(10, 160, "RECEIVING .", RGB2COLOR(0, 255, 0));
+                lcd_print(10, 160, "RECEIVING.", RGB2COLOR(0, 255, 0));
                 break;
             case 2:
-                lcd_print(10, 160, "RECEIVING ..", RGB2COLOR(0, 255, 0));
+                lcd_print(10, 160, "RECEIVING..", RGB2COLOR(0, 255, 0));
                 break;
             case 3:
-                lcd_print(10, 160, "RECEIVING ...", RGB2COLOR(0, 255, 0));
+                lcd_print(10, 160, "RECEIVING...", RGB2COLOR(0, 255, 0));
                 break;
             case 4:
-                lcd_print(10, 160, "RECEIVING ....", RGB2COLOR(0, 255, 0));
+                lcd_print(10, 160, "RECEIVING....", RGB2COLOR(0, 255, 0));
                 break;            
             default:
                 break;
@@ -101,16 +104,22 @@ int main(void)
 {
     uint32_t ret_val;
 
-    hardware_init();    
+    //uint32_t const gpregret = NRF_POWER->GPREGRET;
+
+    hardware_init();
 
     lcd_print(10, 100, "STARTING", RGB2COLOR(0, 255, 0));
-    nrf_delay_ms(1000);    
+    nrf_delay_ms(1000);
 
-    /*if (nrf_gpio_pin_read(KEY_ACTION)) {
-    
+    /*if (button_pressed(KEY_ACTION)) {
+        ota_dfu = true;
+        nrf_delay_ms(1000);
     } 
+    
+    // Start Bootloader in BLE OTA mode
+    ota_dfu = (gpregret == DFU_MAGIC_OTA_RESET);
 
-    nrf_delay_ms(500);*/
+    if (ota_dfu) NRF_POWER->GPREGRET = 0;*/
 
     // Must happen before flash protection is applied, since it edits a protected page.
     nrf_bootloader_mbr_addrs_populate();
