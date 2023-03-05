@@ -186,7 +186,7 @@ static void hardware_init(void) {
   display_fill(0, 0, 240, 240, BCK_COLOR);
   lcd_print(5, 10, "PINETIME 40", RGB2COLOR(255, 255, 255));
   lcd_print(5, 30, "BOOTLOADER", RGB2COLOR(200, 200, 200));
-  lcd_print(5, 50, "V1.2", RGB2COLOR(200, 200, 200));
+  lcd_print(5, 50, "V1.3", RGB2COLOR(200, 200, 200));
 
 
 }

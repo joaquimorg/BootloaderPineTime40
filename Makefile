@@ -255,7 +255,7 @@ erase:
 
 settings:
 	@echo	** Generating Settings
-	D:\tools\nrfutil.exe settings generate --family NRF52840 --key-file d:/Work/PineTime/nordic_pem_keys/pinetime.pem --bootloader-version 2 --application-version 1 --bl-settings-version 2 --app-boot-validation NO_VALIDATION --application ./pkg/PinetimeNew40.ino.hex  ./pkg/bl_settings.hex
+	D:\tools\nrfutil.exe settings generate --family NRF52840 --key-file d:/Work/PineTime/nordic_pem_keys/pinetime.pem --bootloader-version 3 --application-version 1 --bl-settings-version 2 --app-boot-validation NO_VALIDATION --sd-boot-validation NO_VALIDATION --softdevice ./softdevice/s113_nrf52_7.3.0_softdevice.hex  --application $(OUTPUT_DIRECTORY)/$(PROJECT_NAME).hex  ./pkg/bl_settings.hex
 
 flash: default
 	@echo	** Program Pinetime with $(OUTPUT_DIRECTORY)/$(PROJECT_NAME).app.hex
@@ -264,14 +264,18 @@ flash: default
 
 dfu-zip:
 	@echo	** Bootloader DFU zip
-	python scripts/hexmerge.py --overlap=replace ./pkg/bl_settings.hex $(OUTPUT_DIRECTORY)/$(PROJECT_NAME).hex -o ./pkg/$(PROJECT_NAME)_settings.hex
-	D:\tools\nrfutil.exe pkg generate --key-file d:/Work/PineTime/nordic_pem_keys/pinetime.pem --bootloader ./pkg/$(PROJECT_NAME)_settings.hex --hw-version 52 --sd-req 0x125 --bootloader-version 2 ./pkg/$(PROJECT_NAME).zip
+#	python scripts/hexmerge.py --overlap=replace ./pkg/bl_settings.hex $(OUTPUT_DIRECTORY)/$(PROJECT_NAME).hex -o ./pkg/$(PROJECT_NAME)_settings.hex
+	D:\tools\nrfutil.exe pkg generate --key-file d:/Work/PineTime/nordic_pem_keys/pinetime.pem --bootloader $(OUTPUT_DIRECTORY)/$(PROJECT_NAME).hex --hw-version 52 --sd-req 0x125 --bootloader-version 3 ./pkg/$(PROJECT_NAME).zip
 
 dfu-softdevice:
 	@echo	** Bootloader DFU zip
 #	D:\tools\nrfutil.exe settings generate --family NRF52840 --bootloader-version 2 --bl-settings-version 2 --softdevice ./softdevice/$(SOFT_DEVICE_HEX) ./pkg/bl_settings.hex
 #	python scripts/hexmerge.py --overlap=replace ./pkg/bl_settings.hex ./softdevice/$(SOFT_DEVICE_HEX) -o ./pkg/sd_settings.hex
 	D:\tools\nrfutil.exe pkg generate --key-file d:/Work/PineTime/nordic_pem_keys/pinetime.pem --softdevice ./softdevice/$(SOFT_DEVICE_HEX) --hw-version 52 --sd-req 0x125 ./pkg/sd.zip
+
+app-settings:
+	@echo	** Generating Settings
+	D:\tools\nrfutil.exe settings generate --family NRF52840 --key-file d:/Work/PineTime/nordic_pem_keys/pinetime.pem --bootloader-version 3 --application-version 1 --bl-settings-version 2 --app-boot-validation NO_VALIDATION --sd-boot-validation NO_VALIDATION --softdevice ./softdevice/s113_nrf52_7.3.0_softdevice.hex  --application ./pkg/PinetimeNew40.ino.hex  ./pkg/app_settings.hex
 
 app-zip:
 	@echo	** Bootloader DFU zip
