@@ -55,21 +55,21 @@ static void dfu_observer(nrf_dfu_evt_type_t evt_type)
     {
         case NRF_DFU_EVT_DFU_FAILED:
         case NRF_DFU_EVT_DFU_ABORTED:
-            lcd_print(10, 160, "DFU ERROR", RGB2COLOR(128, 0, 0));
+            lcd_print(10, 160, "DFU ERROR", RGB2COLOR(128, 0, 0), true);
             break;
         case NRF_DFU_EVT_DFU_INITIALIZED:
         case NRF_DFU_EVT_TRANSPORT_DEACTIVATED:
-            lcd_print(10, 100, "BLE DFU MODE", RGB2COLOR(255, 255, 0));
-            lcd_print(10, 160, "WAITING...", RGB2COLOR(0, 255, 255));
+            lcd_print(10, 100, "BLE DFU MODE", RGB2COLOR(255, 255, 0), true);
+            lcd_print(10, 160, "WAITING...", RGB2COLOR(0, 255, 255), true);
             break;
         case NRF_DFU_EVT_TRANSPORT_ACTIVATED:
-            lcd_print(10, 160, "CONNECTED", RGB2COLOR(0, 255, 0));
+            lcd_print(10, 160, "CONNECTED", RGB2COLOR(0, 255, 0), true);
             break;
         case NRF_DFU_EVT_DFU_STARTED:
-            lcd_print(10, 160, "STARTED", RGB2COLOR(0, 255, 0));
+            lcd_print(10, 160, "STARTED", RGB2COLOR(0, 255, 0), true);
             break;
         case NRF_DFU_EVT_DFU_COMPLETED:
-            lcd_print(10, 160, "COMPLETED", RGB2COLOR(0, 255, 0));
+            lcd_print(10, 160, "COMPLETED", RGB2COLOR(0, 255, 0), true);
             break;
         case NRF_DFU_EVT_OBJECT_RECEIVED:
             anim++;
@@ -77,16 +77,16 @@ static void dfu_observer(nrf_dfu_evt_type_t evt_type)
             switch (anim)
             {
             case 1:
-                lcd_print(10, 160, "RECEIVING.", RGB2COLOR(0, 255, 0));
+                lcd_print(10, 160, "RECEIVING", RGB2COLOR(0, 255, 0), true);
                 break;
             case 2:
-                lcd_print(10, 160, "RECEIVING..", RGB2COLOR(0, 255, 0));
+                lcd_print(10, 160, "RECEIVING.", RGB2COLOR(0, 255, 0), true);
                 break;
             case 3:
-                lcd_print(10, 160, "RECEIVING...", RGB2COLOR(0, 255, 0));
+                lcd_print(10, 160, "RECEIVING..", RGB2COLOR(0, 255, 0), true);
                 break;
             case 4:
-                lcd_print(10, 160, "RECEIVING....", RGB2COLOR(0, 255, 0));
+                lcd_print(10, 160, "RECEIVING...", RGB2COLOR(0, 255, 0), true);
                 break;            
             default:
                 break;
@@ -108,7 +108,7 @@ int main(void)
 
     hardware_init();
 
-    lcd_print(10, 100, "STARTING", RGB2COLOR(0, 255, 0));
+    lcd_print(10, 100, "STARTING", RGB2COLOR(0, 255, 0), true);
     nrf_delay_ms(1000);
 
     /*if (button_pressed(KEY_ACTION)) {
@@ -136,7 +136,7 @@ int main(void)
 
     //NRF_LOG_INFO("Inside main");
     //st7789_fill(0, 0, 240, 240, RGB2COLOR(0, 0, 0));
-    lcd_print(10, 100, "BOOTING...", RGB2COLOR(255, 255, 0));
+    lcd_print(10, 100, "BOOTING...", RGB2COLOR(255, 255, 0), true);
     
     ret_val = nrf_bootloader_init(dfu_observer);
     APP_ERROR_CHECK(ret_val);

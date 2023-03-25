@@ -4,6 +4,7 @@
 #include "nrf_delay.h"
 #include "nrf_gpio.h"
 #include "display.h"
+#include <string.h>
 
 // Pinetime IO
 
@@ -96,7 +97,7 @@ const uint8_t font_16_data[] = {
 
 #define RGB2COLOR(r, g, b) ((((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3)))
 
-#define BCK_COLOR RGB2COLOR(0x00, 0x20, 0x00)
+#define BCK_COLOR RGB2COLOR(0x00, 0x00, 0x00)
 
 void display_fill(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t color) {
   uint16_t i;
@@ -158,20 +159,30 @@ void lcd_char(int x1, int y1, char ch, uint16_t color) {
 
 }
 
-void lcd_print(int x1, int y1, char* ch, uint16_t color) {
+void lcd_print(int x1, int y1, char* ch, uint16_t color, bool bck) {
 
-  display_fill(0, y1, 240, y1 + (GLYPH_SIZE * CHAR_ZOOM), BCK_COLOR);
+  if (bck) display_fill(0, y1-4, 240, y1 + (GLYPH_SIZE * CHAR_ZOOM) + 4, BCK_COLOR);
 
   while (*ch) {
+    //display_fill(x1 - 1, y1 - 1, x1 + 9 * CHAR_ZOOM, y1 + 9 * CHAR_ZOOM, BCK_COLOR);
     lcd_char(x1, y1, *ch, color);
     x1 += 9 * CHAR_ZOOM;
     ch++;
   }
 }
 
+#include "logo_565.c"
 // ------------------------------------------------------------------------------------------------------
 //
 static void hardware_init(void) {
+
+  int x1;
+  int y1;
+
+  init_display();
+  display_fill(0, 0, 240, 240, BCK_COLOR);
+
+  NRFX_DELAY_US(100);
 
   // Backlight
   nrf_gpio_pin_clear(LCD_LIGHT_1);
@@ -181,12 +192,21 @@ static void hardware_init(void) {
 
   NRFX_DELAY_US(100); // wait for the pin state is stable
 
-  init_display();
+  uint8_t splash[gimp_image.width * gimp_image.height * gimp_image.bytes_per_pixel];
+  
+  GIMP_IMAGE_RUN_LENGTH_DECODE(splash, gimp_image.rle_pixel_data, gimp_image.width * gimp_image.height, gimp_image.bytes_per_pixel);
 
-  display_fill(0, 0, 240, 240, BCK_COLOR);
-  lcd_print(5, 10, "PINETIME 40", RGB2COLOR(255, 255, 255));
-  lcd_print(5, 30, "BOOTLOADER", RGB2COLOR(200, 200, 200));
-  lcd_print(5, 50, "V1.3", RGB2COLOR(200, 200, 200));
+  x1 = 120 - (gimp_image.width / 2);
+  y1 = 120 - (gimp_image.height / 2);
+  
+  set_addr_display(x1, y1, gimp_image.width, gimp_image.height);
+  write_display(splash, sizeof(splash));
+
+  nrf_delay_ms(3000);
+
+  lcd_print(5, 10, "PINETIME 40", RGB2COLOR(255, 255, 255), false);
+  lcd_print(5, 30, "BOOTLOADER", RGB2COLOR(200, 200, 200), false);
+  lcd_print(5, 50, "V1.4", RGB2COLOR(200, 200, 200), false);
 
 
 }
